@@ -104,9 +104,16 @@ export default function App() {
         illustrationUrl,
         coverUrl,
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Terjadi kesalahan saat generate. Pastikan API Key sudah benar.");
+      const errorMessage = err?.message || "";
+      if (errorMessage.includes("API_KEY_INVALID")) {
+        setError("API Key tidak valid. Silakan cek kembali di dashboard Google AI Studio.");
+      } else if (errorMessage.includes("quota")) {
+        setError("Kuota API Key Anda telah habis atau limit tercapai.");
+      } else {
+        setError(`Terjadi kesalahan: ${errorMessage || "Pastikan API Key sudah benar dan koneksi internet stabil."}`);
+      }
     } finally {
       setIsGenerating(false);
     }
